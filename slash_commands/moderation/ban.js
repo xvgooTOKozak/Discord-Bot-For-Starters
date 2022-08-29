@@ -4,7 +4,7 @@ const { MessageEmbed } = require("discord.js")
 module.exports = {
     data: new SlashCommandBuilder()
     .setName("ban")
-    .setDescription("Allows the admin or owner to ban the member.")
+    .setDescription("Zezwala administratorowi lub właścicielowi na zablokowanie członka.")
     .addUserOption((option) => option.setName('user').setDescription('The person who you want to ban').setRequired(true))
     .addStringOption(option => option.setName('reason').setDescription('Reason to ban member').setRequired(true)),
     run: async (client, interaction) => {
@@ -14,22 +14,22 @@ module.exports = {
         const user = interaction.options.getUser('user')
         const member = interaction.guild.members.cache.get(user.id) || await interaction.guild.members.fetch(user.id).catch(err => {})
 
-        if(!member) return interaction.followUp("😅 | Unable to get details related to given member.");
+        if(!member) return interaction.followUp("😅 | Nie można uzyskać szczegółów związanych z danym członkiem.");
         const reason = interaction.options.getString('reason')
 
         if(!member.bannable || member.user.id === client.user.id) 
-        return interaction.followUp("😅 | I am unable to ban this member");
+        return interaction.followUp("😅 | Nie mogę zablokować tego użytkownika");
         
         if(interaction.member.roles.highest.position <= member.roles.highest.position) 
-        return interaction.followUp('Given member have higher or equal rank as you so i can not ban them.')
+        return interaction.followUp('Dany członek mają wyższą lub równą rangę jak ty więc nie mogę ich zbanować.')
         
         const embed = new MessageEmbed()
-        .setDescription(`**${member.user.tag}** is banned from the server for \`${reason}\``)
-        .setColor("GREEN")
+        .setDescription(`**${member.user.tag}** jest zbanowany z serwera za \`${reason}\``)
+        .setColor("RED")
         .setFooter("Ban Member")
         .setTimestamp()
 
-        await member.user.send(`You are banned from **\`${interaction.guild.name}\`** for \`${reason}\``).catch(err => {})
+        await member.user.send(`Masz zakaz **\`${interaction.guild.name}\`** za \`${reason}\``).catch(err => {})
         member.ban({ reason })
 
         return interaction.followUp({ embeds: [ embed ]})
